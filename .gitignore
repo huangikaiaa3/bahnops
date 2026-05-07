@@ -1,0 +1,10 @@
+.DS_Store
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+.env
+data/processed/*.json
+data/processed/*.jsonl
+data/raw/*.pdf
+data/raw/*.docx

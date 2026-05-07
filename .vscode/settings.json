@@ -1,0 +1,7 @@
+{
+  "python.defaultInterpreterPath": "/usr/local/bin/python3",
+  "isort.importStrategy": "fromEnvironment",
+  "isort.interpreter": [
+    "/usr/local/bin/python3"
+  ]
+}
