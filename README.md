@@ -25,15 +25,26 @@ The product goal is a service that can:
 - store recent and historical status changes
 - later surface reliability analytics
 
-## Week 1 focus
+## Current capabilities
 
-Week 1 is intentionally about the ingestion foundation:
-- confirm DB API access and the target endpoints
-- practice Python async basics
-- fetch live DB data for one station or one train target
-- normalize the API response into your own internal shape
+The project currently includes:
+- a FastAPI service skeleton with a health endpoint
+- async practice scripts for sync vs async comparison
+- a live Deutsche Bahn fetch script for one station target
+- a normalized station snapshot that merges planned board data with current change data
 
-## Starter structure
+## Planned roadmap
+
+The project is evolving in stages:
+- ingestion and normalization first
+- persistence and history in PostgreSQL next
+- FastAPI read endpoints after storage is in place
+- eventing with Kafka later
+- analytics with dbt and Spark later
+
+Detailed milestone notes live in [docs/roadmap.md](/Users/wixx3r/Documents/BahnOps/bahnops/docs/roadmap.md:1).
+
+## Repo structure
 
 - `api/`: FastAPI service code
 - `data/fixtures/`: small saved payloads or test fixtures
@@ -43,10 +54,9 @@ Week 1 is intentionally about the ingestion foundation:
 - `scripts/`: polling, normalization, and utility scripts
 - `tests/`: unit and integration tests
 
-## First milestone
+## Local setup
 
-By the end of week 1, this project should contain:
-- a working script that fetches live DB API data
-- a normalized representation of station or service data
-- notes on the endpoints you chose and why
-- one async exercise that compares sync and async request patterns
+1. Create and activate a local virtual environment.
+2. Install dependencies with `pip install -r requirements.txt`.
+3. Create a local `.env` file with `DB_CLIENT_ID` and `DB_API_KEY`.
+4. Run the fetch prototype from `scripts/fetch_db_board.py`.

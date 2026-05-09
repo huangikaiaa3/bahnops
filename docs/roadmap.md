@@ -33,6 +33,41 @@ The first useful version should let you:
 6. Event pipeline for train-state changes
 7. Analytics and batch processing over historical data
 
+## Weekly milestones
+
+### Week 1
+
+Focus:
+- confirm DB API access and the target endpoints
+- practice Python async basics in the context of polling
+- fetch live DB data for one station target
+- normalize planned board data and current change data into an internal model
+
+Expected outputs:
+- a working fetch script for one station target
+- a normalized station snapshot artifact
+- notes on endpoint choice and the role of `plan` vs `fchg`
+
+### Week 2
+
+Focus:
+- design the first PostgreSQL schema
+- store poll runs and normalized service observations
+- separate current state from historical records
+
+### Week 3
+
+Focus:
+- build FastAPI read endpoints on top of stored data
+- expose station board and service detail views
+
+### Later weeks
+
+Focus:
+- improve polling robustness and configuration
+- add Kafka-based change events
+- add analytics modeling with dbt and Spark
+
 ## Non-goals right now
 
 - scraping websites
