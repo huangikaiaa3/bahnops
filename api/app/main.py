@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 
-app = FastAPI(title="OfferOps")
+app = FastAPI(title="BahnOps")
 
 
 @app.get("/health")

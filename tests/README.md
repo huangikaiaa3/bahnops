@@ -1,8 +1,9 @@
 # Tests
 
-Start small.
+Start with the parts that are easiest to break:
+- API response normalization
+- polling logic
+- database writes
+- API health and read endpoints
 
-Early tests to add:
-- parser behavior for sample job files
-- API healthcheck
-- jobs endpoint tests once the API exists
+As the project grows, add regression tests around delay and platform-change handling.

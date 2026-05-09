@@ -4,7 +4,7 @@ __pycache__/
 .pytest_cache/
 *.pyc
 .env
-data/processed/*.json
-data/processed/*.jsonl
-data/raw/*.pdf
-data/raw/*.docx
+data/snapshots/*.json
+data/snapshots/*.jsonl
+data/fixtures/*.pdf
+data/fixtures/*.docx

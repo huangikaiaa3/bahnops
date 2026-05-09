@@ -1,37 +1,52 @@
-# OfferOps
+# BahnOps
 
-OfferOps is a small portfolio project for managing a job search like a product and data system.
+BahnOps is a live Deutsche Bahn transit data project built to grow over 8 weeks.
 
-The goal is to grow this project over 8 weeks while learning:
+The system fetches planned and live train data from the Deutsche Bahn API, normalizes it, stores current and historical state in PostgreSQL, and exposes that data through a backend service and later a small frontend.
+
+## What this project is for
+
+BahnOps is meant to help you learn, in one connected system:
 - async Python
+- API-driven ingestion
 - FastAPI
 - PostgreSQL
-- RAG
-- dbt
 - Kafka
+- dbt
 - Spark
 - Docker, Kubernetes, and Terraform basics
 
+## Core product
+
+The product goal is a service that can:
+- track specific stations, trains, or S-Bahn lines
+- show planned and current arrival or departure status
+- show delays, platform changes, and cancellations
+- store recent and historical status changes
+- later surface reliability analytics
+
 ## Week 1 focus
 
-Week 1 is intentionally small:
-- set up the OfferOps project
-- collect sample job-posting data
+Week 1 is intentionally about the ingestion foundation:
+- confirm DB API access and the target endpoints
 - practice Python async basics
-- build a simple parsing script
+- fetch live DB data for one station or one train target
+- normalize the API response into your own internal shape
 
 ## Starter structure
 
-- `api/`: backend application code
-- `data/`: local seed data and processed outputs
-- `docs/`: architecture notes, decisions, and screenshots
-- `infra/`: future Docker, Kubernetes, and Terraform files
-- `scripts/`: one-off utilities such as parsing and ingestion
-- `tests/`: test files
+- `api/`: FastAPI service code
+- `data/fixtures/`: small saved payloads or test fixtures
+- `data/snapshots/`: scratch outputs and exported local snapshots
+- `docs/`: architecture notes, API notes, and milestones
+- `infra/`: Docker, Kubernetes, and Terraform files later on
+- `scripts/`: polling, normalization, and utility scripts
+- `tests/`: unit and integration tests
 
 ## First milestone
 
 By the end of week 1, this project should contain:
-- a small dataset of saved job descriptions
-- a Python script that parses those files into JSON
-- a short note on sync vs async behavior
+- a working script that fetches live DB API data
+- a normalized representation of station or service data
+- notes on the endpoints you chose and why
+- one async exercise that compares sync and async request patterns

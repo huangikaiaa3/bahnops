@@ -1,8 +1,14 @@
 # Scripts
 
-Use this folder for small utilities during the learning plan.
+Use this folder for focused utilities that support the BahnOps system.
 
 Early examples:
-- parse saved job descriptions into JSON
-- ingest parsed data into PostgreSQL
-- rebuild embeddings for RAG
+- poll Deutsche Bahn API endpoints
+- normalize API payloads into internal models
+- store or replay sample responses for testing
+- compare sync versus async request strategies
+
+Current starter scripts:
+- `fetch_db_board.py`: starter shape for polling one DB target and writing a snapshot
+- `sync_vs_async_demo.py`: async timing practice
+- `sync_vs_async_practice.py`: extra async exercises
