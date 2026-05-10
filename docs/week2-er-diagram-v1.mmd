@@ -58,7 +58,7 @@ erDiagram
 
     service {
         bigint id PK
-        text service_uid UK
+        text service_run_uid UK
         text category
         text number
         text line
@@ -70,6 +70,7 @@ erDiagram
         bigint id PK
         bigint poll_run_id FK
         bigint service_id FK
+        text observation_uid UK
         timestamptz observed_at
         text planned_arrival
         text current_arrival

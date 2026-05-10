@@ -54,6 +54,7 @@ Focus:
 - design the first PostgreSQL schema
 - store poll runs and normalized service observations
 - separate current state from historical records
+- define identifier boundaries between train labels, service runs, and stop observations
 
 ### Week 3
 
