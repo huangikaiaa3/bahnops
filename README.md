@@ -32,6 +32,7 @@ The project currently includes:
 - async practice scripts for sync vs async comparison
 - a live Deutsche Bahn fetch script for one station target
 - a normalized station snapshot that merges planned board data with current change data
+- a local PostgreSQL setup through Docker Compose
 
 ## Planned roadmap
 
@@ -58,5 +59,12 @@ Detailed milestone notes live in [docs/roadmap.md](/Users/wixx3r/Documents/BahnO
 
 1. Create and activate a local virtual environment.
 2. Install dependencies with `pip install -r requirements.txt`.
-3. Create a local `.env` file with `DB_CLIENT_ID` and `DB_API_KEY`.
-4. Run the fetch prototype from `scripts/fetch_db_board.py`.
+3. Create a local `.env` file based on `.env.example`.
+4. Follow [infra/README.md](/Users/wixx3r/Documents/BahnOps/bahnops/infra/README.md:1) to start local PostgreSQL and apply the initial schema.
+5. Run the fetch prototype from `scripts/fetch_db_board.py`.
+
+## Local PostgreSQL
+
+Week 2 uses a lightweight local PostgreSQL setup through Docker Compose.
+
+See [infra/README.md](/Users/wixx3r/Documents/BahnOps/bahnops/infra/README.md:1) for the detailed Postgres setup, validation, and schema commands.
