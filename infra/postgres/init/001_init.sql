@@ -40,7 +40,7 @@ create table if not exists service_observation (
     id bigint generated always as identity primary key,
     poll_run_id bigint not null references poll_run(id),
     service_id bigint not null references service(id),
-    observation_uid text not null unique,
+    observation_uid text not null,
     stop_sequence integer not null,
     observed_at timestamptz not null,
     planned_arrival text,
@@ -55,7 +55,8 @@ create table if not exists service_observation (
     planned_departure_path jsonb not null default '[]'::jsonb,
     current_arrival_path jsonb not null default '[]'::jsonb,
     current_departure_path jsonb not null default '[]'::jsonb,
-    raw_snapshot jsonb
+    raw_snapshot jsonb,
+    unique (poll_run_id, observation_uid)
 );
 
 create table if not exists service_state_current (

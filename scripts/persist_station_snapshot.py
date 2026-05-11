@@ -44,7 +44,7 @@ TABLE_CONFIG = {
         "fields": ("poll_run_id", "service_id", "observation_uid", "stop_sequence", "observed_at", "planned_arrival", "current_arrival", "planned_departure", "current_departure", "planned_arrival_platform", "planned_departure_platform", "current_arrival_platform", "current_departure_platform", "planned_arrival_path", "planned_departure_path", "current_arrival_path", "current_departure_path", "raw_snapshot",),
         "on_conflict": {
             "use": True,
-            "target": ("observation_uid",),
+            "target": ("poll_run_id", "observation_uid",),
             "action": "DO NOTHING",
         },
     },
