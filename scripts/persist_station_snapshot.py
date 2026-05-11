@@ -6,6 +6,7 @@ import datetime
 import psycopg
 from dotenv import load_dotenv
 
+# SNAPSHOT_PATH = Path("data/snapshots/station_snapshot.json")
 SNAPSHOT_PATH = Path("data/snapshots/station_snapshot.json")
 
 TABLE_CONFIG = {
@@ -230,7 +231,7 @@ def get_service_state_event_data(service_state_current_data: dict, connection: p
 
     return service_state_event_data
 
-def build_insert_query(target_table: str) -> str:
+def build_insert_query(target_table: str, return_id: bool = False) -> str:
     table_config = TABLE_CONFIG[target_table]
     columns = table_config["fields"]
     column_list = ", ".join(columns)
@@ -252,18 +253,24 @@ def build_insert_query(target_table: str) -> str:
             )
             query += f" ON CONFLICT ({target}) DO UPDATE SET {set_clause}"
 
+    if return_id:
+        query += " RETURNING id"
+
     return query
 
 def build_insert_values(data: dict, target_table: str) -> tuple:
     columns = TABLE_CONFIG[target_table]["fields"]
     return tuple(data[column] for column in columns)
 
-def write_to_table(data: dict, target_table: str, connection: psycopg.Connection) -> None:
-    query = build_insert_query(target_table)
+def write_to_table(data: dict, target_table: str, connection: psycopg.Connection, return_id: bool = False):
+    query = build_insert_query(target_table, return_id=return_id)
     values = build_insert_values(data, target_table)
 
     with connection.cursor() as cursor:
         cursor.execute(query, values)
+        if return_id:
+            row = cursor.fetchone()
+            return row[0]
 
 def write_snapshot_to_db(database_url, snapshot):
     station_data = get_station_data(snapshot)
@@ -277,22 +284,21 @@ def write_snapshot_to_db(database_url, snapshot):
         
         _poll_target_id = get_id_by_unique_field("poll_target", "station_id", _station_id, connection)
         poll_run_data = get_poll_run_data(_poll_target_id, snapshot)
-        write_to_table(poll_run_data, "poll_run", connection)
+        _poll_run_id = write_to_table(poll_run_data, "poll_run", connection, return_id=True)
         
         service_data = get_service_data(snapshot)
         for _, service_run_data in service_data.items():
             write_to_table(service_run_data, "service", connection)
             
-        _poll_run_id = get_id_by_unique_field("poll_run", "poll_target_id", _poll_target_id, connection)
         service_observation_data = _update_service_data(_poll_run_id, service_data, connection)
         for _, service_run_observation_data in service_observation_data.items():
             write_to_table(service_run_observation_data, "service_observation", connection)
 
         service_state_current_data = get_service_state_current_data(service_observation_data)
+        service_state_event_data = get_service_state_event_data(service_state_current_data, connection)
         for _, current_state_data in service_state_current_data.items():
             write_to_table(current_state_data, "service_state_current", connection)
 
-        service_state_event_data = get_service_state_event_data(service_state_current_data, connection)
         for event_data in service_state_event_data:
             write_to_table(event_data, "service_state_event", connection)
 
