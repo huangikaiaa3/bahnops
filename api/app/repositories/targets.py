@@ -2,7 +2,7 @@ from psycopg import Connection
 from psycopg.rows import dict_row
 
 
-def get_tracked_targets(connection: Connection) -> list[dict]:
+def get_targets(connection: Connection) -> list[dict]:
     query = """
         SELECT
             pt.id,

@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
-class TrackedTargetResponse(BaseModel):
+
+class TargetResponse(BaseModel):
     id: int
     station_id: int
     station_eva_number: str
