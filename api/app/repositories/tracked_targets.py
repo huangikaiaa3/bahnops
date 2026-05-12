@@ -1,6 +1,7 @@
 from psycopg import Connection
 from psycopg.rows import dict_row
 
+
 def get_tracked_targets(connection: Connection) -> list[dict]:
     query = """
         SELECT

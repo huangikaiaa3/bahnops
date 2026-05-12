@@ -1,5 +1,6 @@
 import psycopg
-from api.app.config import config
+from api.app.core.config import config
+
 
 def get_db_connection():
     with psycopg.connect(config.database_url) as connection:
