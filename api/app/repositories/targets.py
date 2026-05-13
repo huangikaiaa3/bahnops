@@ -1,8 +1,8 @@
-from psycopg import Connection
+from psycopg import AsyncConnection
 from psycopg.rows import dict_row
 
 
-def get_targets(connection: Connection) -> list[dict]:
+async def get_targets(connection: AsyncConnection) -> list[dict]:
     query = """
         SELECT
             pt.id,
@@ -18,8 +18,8 @@ def get_targets(connection: Connection) -> list[dict]:
         ORDER BY pt.id;
     """
 
-    with connection.cursor(row_factory=dict_row) as cursor:
-        cursor.execute(query)
-        rows = cursor.fetchall()
+    async with connection.cursor(row_factory=dict_row) as cursor:
+        await cursor.execute(query)
+        rows = await cursor.fetchall()
 
     return rows

@@ -1,8 +1,8 @@
-from psycopg import Connection
+from psycopg import AsyncConnection
 from psycopg.rows import dict_row
 
 
-def get_service_by_id(service_id: int, connection: Connection) -> dict | None:
+async def get_service_by_id(service_id: int, connection: AsyncConnection) -> dict | None:
     query = """
         SELECT
             s.id AS service_id,
@@ -30,14 +30,14 @@ def get_service_by_id(service_id: int, connection: Connection) -> dict | None:
         WHERE s.id = %s;
     """
 
-    with connection.cursor(row_factory=dict_row) as cursor:
-        cursor.execute(query, (service_id,))
-        row = cursor.fetchone()
+    async with connection.cursor(row_factory=dict_row) as cursor:
+        await cursor.execute(query, (service_id,))
+        row = await cursor.fetchone()
 
     return row
 
 
-def get_service_changes_by_id(service_id: int, connection: Connection) -> list[dict]:
+async def get_service_changes_by_id(service_id: int, connection: AsyncConnection) -> list[dict]:
     query = """
         SELECT
             service_id,
@@ -51,8 +51,8 @@ def get_service_changes_by_id(service_id: int, connection: Connection) -> list[d
         ORDER BY event_time ASC, id ASC;
     """
 
-    with connection.cursor(row_factory=dict_row) as cursor:
-        cursor.execute(query, (service_id,))
-        rows = cursor.fetchall()
+    async with connection.cursor(row_factory=dict_row) as cursor:
+        await cursor.execute(query, (service_id,))
+        rows = await cursor.fetchall()
 
     return rows

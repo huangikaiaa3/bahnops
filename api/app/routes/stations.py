@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from psycopg import Connection
+from psycopg import AsyncConnection
 
 from api.app.db.session import get_db_connection
 from api.app.repositories.stations import (
@@ -13,11 +13,11 @@ router = APIRouter(prefix="/stations", tags=["stations"])
 
 
 @router.get("/{eva_number}/services", response_model=list[StationServiceResponse])
-async def get_station_services(eva_number: str, connection: Connection = Depends(get_db_connection),) -> list[StationServiceResponse]:
-    station = get_station_by_eva_number(eva_number=eva_number, connection=connection)
+async def get_station_services(eva_number: str, connection: AsyncConnection = Depends(get_db_connection)) -> list[StationServiceResponse]:
+    station = await get_station_by_eva_number(eva_number=eva_number, connection=connection)
 
     if station is None:
         raise HTTPException(status_code=404, detail="Station not found")
 
-    services = get_station_services_by_eva_number(eva_number=eva_number, connection=connection)
+    services = await get_station_services_by_eva_number(eva_number=eva_number, connection=connection)
     return services

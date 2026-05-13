@@ -1,8 +1,8 @@
-from psycopg import Connection
+from psycopg import AsyncConnection
 from psycopg.rows import dict_row
 
 
-def get_station_by_eva_number(eva_number: str, connection: Connection) -> dict | None:
+async def get_station_by_eva_number(eva_number: str, connection: AsyncConnection) -> dict | None:
     query = """
         SELECT
             id,
@@ -12,14 +12,14 @@ def get_station_by_eva_number(eva_number: str, connection: Connection) -> dict |
         WHERE eva_number = %s;
     """
 
-    with connection.cursor(row_factory=dict_row) as cursor:
-        cursor.execute(query, (eva_number,))
-        row = cursor.fetchone()
+    async with connection.cursor(row_factory=dict_row) as cursor:
+        await cursor.execute(query, (eva_number,))
+        row = await cursor.fetchone()
 
     return row
 
 
-def get_station_services_by_eva_number(eva_number: str, connection: Connection) -> list[dict]:
+async def get_station_services_by_eva_number(eva_number: str, connection: AsyncConnection) -> list[dict]:
     query = """
         SELECT
             ssc.service_id,
@@ -57,8 +57,8 @@ def get_station_services_by_eva_number(eva_number: str, connection: Connection) 
             ssc.service_id;
     """
 
-    with connection.cursor(row_factory=dict_row) as cursor:
-        cursor.execute(query, (eva_number,))
-        rows = cursor.fetchall()
+    async with connection.cursor(row_factory=dict_row) as cursor:
+        await cursor.execute(query, (eva_number,))
+        rows = await cursor.fetchall()
 
     return rows
