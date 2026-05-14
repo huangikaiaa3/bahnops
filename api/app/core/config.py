@@ -11,5 +11,7 @@ class Config:
         self.db_api_key = os.getenv("DB_API_KEY")
         self.db_timetable_base_url = os.getenv("DB_TIMETABLE_BASE_URL")
         self.db_request_timeout_seconds = os.getenv("DB_REQUEST_TIMEOUT_SECONDS")
+        self.db_request_retry_count = os.getenv("DB_REQUEST_RETRY_COUNT")
+        self.db_request_retry_delay_seconds = os.getenv("DB_REQUEST_RETRY_DELAY_SECONDS")
 
 config = Config()

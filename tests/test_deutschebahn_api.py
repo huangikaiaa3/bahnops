@@ -1,3 +1,4 @@
+import httpx
 import unittest
 from unittest.mock import AsyncMock, Mock, patch
 
@@ -40,6 +41,12 @@ class FetchPlanTests(unittest.IsolatedAsyncioTestCase):
             "api.app.ingestion.deutschebahn_api.config.db_request_timeout_seconds",
             "10",
         ), patch(
+            "api.app.ingestion.deutschebahn_api.config.db_request_retry_count",
+            "2",
+        ), patch(
+            "api.app.ingestion.deutschebahn_api.config.db_request_retry_delay_seconds",
+            "2",
+        ), patch(
             "api.app.ingestion.deutschebahn_api.httpx.AsyncClient",
             return_value=client_context,
         ) as async_client:
@@ -48,6 +55,73 @@ class FetchPlanTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(xml, "<station />")
         async_client.assert_called_once_with(timeout=10.0)
         client.get.assert_awaited_once()
+
+    async def test_fetch_xml_retries_after_http_error_and_then_succeeds(self) -> None:
+        response = Mock()
+        response.text = "<station />"
+        response.raise_for_status.return_value = None
+
+        client = AsyncMock()
+        client.get.side_effect = [
+            httpx.HTTPError("temporary failure"),
+            response,
+        ]
+
+        client_context = AsyncMock()
+        client_context.__aenter__.return_value = client
+        client_context.__aexit__.return_value = None
+
+        with patch(
+            "api.app.ingestion.deutschebahn_api.config.db_request_timeout_seconds",
+            "10",
+        ), patch(
+            "api.app.ingestion.deutschebahn_api.config.db_request_retry_count",
+            "2",
+        ), patch(
+            "api.app.ingestion.deutschebahn_api.config.db_request_retry_delay_seconds",
+            "2",
+        ), patch(
+            "api.app.ingestion.deutschebahn_api.httpx.AsyncClient",
+            return_value=client_context,
+        ), patch(
+            "api.app.ingestion.deutschebahn_api.asyncio.sleep",
+            new=AsyncMock(),
+        ) as sleep:
+            xml = await _fetch_xml("https://example.com/test.xml")
+
+        self.assertEqual(xml, "<station />")
+        self.assertEqual(client.get.await_count, 2)
+        sleep.assert_awaited_once_with(2.0)
+
+    async def test_fetch_xml_raises_after_exhausting_retries(self) -> None:
+        client = AsyncMock()
+        client.get.side_effect = httpx.HTTPError("persistent failure")
+
+        client_context = AsyncMock()
+        client_context.__aenter__.return_value = client
+        client_context.__aexit__.return_value = None
+
+        with patch(
+            "api.app.ingestion.deutschebahn_api.config.db_request_timeout_seconds",
+            "10",
+        ), patch(
+            "api.app.ingestion.deutschebahn_api.config.db_request_retry_count",
+            "2",
+        ), patch(
+            "api.app.ingestion.deutschebahn_api.config.db_request_retry_delay_seconds",
+            "2",
+        ), patch(
+            "api.app.ingestion.deutschebahn_api.httpx.AsyncClient",
+            return_value=client_context,
+        ), patch(
+            "api.app.ingestion.deutschebahn_api.asyncio.sleep",
+            new=AsyncMock(),
+        ) as sleep:
+            with self.assertRaises(httpx.HTTPError):
+                await _fetch_xml("https://example.com/test.xml")
+
+        self.assertEqual(client.get.await_count, 3)
+        self.assertEqual(sleep.await_count, 2)
 
 
 if __name__ == "__main__":

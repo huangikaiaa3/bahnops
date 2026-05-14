@@ -1,3 +1,4 @@
+import asyncio
 import httpx
 from datetime import datetime
 from api.app.core.config import config
@@ -16,6 +17,22 @@ def _get_request_timeout_seconds() -> float:
         raise ValueError("DB API timeout seconds not found.")
     
     return float(timeout_seconds)
+
+def _get_request_retry_count() -> int:
+    retry_count = config.db_request_retry_count
+
+    if not retry_count:
+        raise ValueError("DB API retry count not found.")
+
+    return int(retry_count)
+
+def _get_request_retry_delay_seconds() -> float:
+    retry_delay_seconds = config.db_request_retry_delay_seconds
+
+    if not retry_delay_seconds:
+        raise ValueError("DB API retry delay seconds not found.")
+
+    return float(retry_delay_seconds)
 
 def _get_credentials() -> tuple[str, str]:
     client_id = config.db_client_id
@@ -54,10 +71,20 @@ def _get_url(endpoint_name: str, **params: str) -> str:
     return config.db_timetable_base_url + path
 
 async def _fetch_xml(path: str) -> str:
-    async with httpx.AsyncClient(timeout=_get_request_timeout_seconds()) as client:
-        response = await client.get(path, headers=_create_headers(),)
-        response.raise_for_status()
-        return response.text
+    timeout = _get_request_timeout_seconds()
+    retry_count = _get_request_retry_count()
+    retry_delay_seconds = _get_request_retry_delay_seconds()
+
+    for attempt in range(retry_count + 1):
+        try:
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                response = await client.get(path, headers=_create_headers(),)
+                response.raise_for_status()
+                return response.text
+        except httpx.HTTPError:
+            if attempt == retry_count:
+                raise
+            await asyncio.sleep(retry_delay_seconds)
     
 async def lookup_station(station_name: str) -> str:
     url = _get_url(endpoint_name="station", station_name=station_name)
