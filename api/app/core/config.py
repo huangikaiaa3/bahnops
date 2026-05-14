@@ -10,6 +10,6 @@ class Config:
         self.db_client_id = os.getenv("DB_CLIENT_ID")
         self.db_api_key = os.getenv("DB_API_KEY")
         self.db_timetable_base_url = os.getenv("DB_TIMETABLE_BASE_URL")
-
+        self.db_request_timeout_seconds = os.getenv("DB_REQUEST_TIMEOUT_SECONDS")
 
 config = Config()

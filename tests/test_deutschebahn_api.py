@@ -1,7 +1,7 @@
 import unittest
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
-from api.app.ingestion.deutschebahn_api import fetch_plan
+from api.app.ingestion.deutschebahn_api import _fetch_xml, fetch_plan
 from tests.constants import FIXED_TEST_TIMESTAMP
 
 
@@ -23,6 +23,31 @@ class FetchPlanTests(unittest.IsolatedAsyncioTestCase):
                 "timetables/v1/plan/8010255/260514/11"
             )
         )
+
+    async def test_fetch_xml_uses_configured_timeout(self) -> None:
+        response = Mock()
+        response.text = "<station />"
+        response.raise_for_status.return_value = None
+
+        client = AsyncMock()
+        client.get.return_value = response
+
+        client_context = AsyncMock()
+        client_context.__aenter__.return_value = client
+        client_context.__aexit__.return_value = None
+
+        with patch(
+            "api.app.ingestion.deutschebahn_api.config.db_request_timeout_seconds",
+            "10",
+        ), patch(
+            "api.app.ingestion.deutschebahn_api.httpx.AsyncClient",
+            return_value=client_context,
+        ) as async_client:
+            xml = await _fetch_xml("https://example.com/test.xml")
+
+        self.assertEqual(xml, "<station />")
+        async_client.assert_called_once_with(timeout=10.0)
+        client.get.assert_awaited_once()
 
 
 if __name__ == "__main__":

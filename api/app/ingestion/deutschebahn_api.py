@@ -9,6 +9,14 @@ ENDPOINTS = {
     "fchg": "/fchg/{eva_number}",
 }
 
+def _get_request_timeout_seconds() -> float:
+    timeout_seconds = config.db_request_timeout_seconds
+    
+    if not timeout_seconds:
+        raise ValueError("DB API timeout seconds not found.")
+    
+    return float(timeout_seconds)
+
 def _get_credentials() -> tuple[str, str]:
     client_id = config.db_client_id
     api_key = config.db_api_key
@@ -46,7 +54,7 @@ def _get_url(endpoint_name: str, **params: str) -> str:
     return config.db_timetable_base_url + path
 
 async def _fetch_xml(path: str) -> str:
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=_get_request_timeout_seconds()) as client:
         response = await client.get(path, headers=_create_headers(),)
         response.raise_for_status()
         return response.text
