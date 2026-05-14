@@ -2,14 +2,16 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-def parse_station_eva_number(station_xml: str) -> str:
+def parse_station_info(station_xml: str) -> tuple[str, str]:
     root = ET.fromstring(station_xml)
     station = root.find("station")
     if station is None:
         raise ValueError("No station element found in station response")
 
+    station_name = station.attrib["name"]
     station_eva_code = station.attrib["eva"]
-    return station_eva_code
+    
+    return station_name, station_eva_code
 
 def _parse_station_plan(plan_xml: str) -> list[dict]:
     root = ET.fromstring(plan_xml)
@@ -94,8 +96,8 @@ def _parse_fchg_updates(fchg_xml: str) -> dict[str, dict]:
 
     return updates
 
-def normalize_station_snapshot(station_name: str, station_xml: str, plan_xml: str, fchg_xml: str | None = None,) -> dict:
-    station_eva_number = parse_station_eva_number(station_xml)
+def normalize_station_snapshot(station_xml: str, plan_xml: str, fchg_xml: str | None = None,) -> dict:
+    station_name, station_eva_number = parse_station_info(station_xml)
     planned_services = _parse_station_plan(plan_xml)
     fchg_updates = _parse_fchg_updates(fchg_xml) if fchg_xml is not None else {}
 

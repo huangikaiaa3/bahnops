@@ -22,7 +22,6 @@ class NormalizeStationSnapshotTests(unittest.TestCase):
         )
 
         snapshot = normalize_station_snapshot(
-            station_name="Berlin Ostbahnhof",
             station_xml=station_xml,
             plan_xml=plan_xml,
             fchg_xml=fchg_xml,
