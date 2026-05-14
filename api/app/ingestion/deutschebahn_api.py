@@ -58,8 +58,14 @@ async def lookup_station(station_name: str) -> str:
     
     return station_xml
 
-async def fetch_plan(eva_number: str, hour_offset: int=0) -> str:
-    target_date, target_hour = get_fetch_plan_target_time(time_now=datetime.now(), hour_offset=hour_offset)
+async def fetch_plan(eva_number: str, hour_offset: int = 0, time_now: datetime | None = None,) -> str:
+    if time_now is None:
+        time_now = datetime.now()
+
+    target_date, target_hour = get_fetch_plan_target_time(
+        time_now=time_now,
+        hour_offset=hour_offset,
+    )
     url = _get_url(endpoint_name="plan", eva_number=eva_number, date=target_date, hour=target_hour)
     plan_xml = await _fetch_xml(path=url)
     

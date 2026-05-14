@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-def _parse_station_eva_number(station_xml: str) -> str:
+def parse_station_eva_number(station_xml: str) -> str:
     root = ET.fromstring(station_xml)
     station = root.find("station")
     if station is None:
@@ -95,7 +95,7 @@ def _parse_fchg_updates(fchg_xml: str) -> dict[str, dict]:
     return updates
 
 def normalize_station_snapshot(station_name: str, station_xml: str, plan_xml: str, fchg_xml: str | None = None,) -> dict:
-    station_eva_number = _parse_station_eva_number(station_xml)
+    station_eva_number = parse_station_eva_number(station_xml)
     planned_services = _parse_station_plan(plan_xml)
     fchg_updates = _parse_fchg_updates(fchg_xml) if fchg_xml is not None else {}
 
