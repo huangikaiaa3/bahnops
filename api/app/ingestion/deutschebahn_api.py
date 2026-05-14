@@ -1,10 +1,7 @@
-from dotenv import load_dotenv
-import os
 import httpx
 from datetime import datetime
+from api.app.core.config import config
 from api.app.utils.time import get_fetch_plan_target_time
-
-BASE_URL = "https://apis.deutschebahn.com/db-api-marketplace/apis/timetables/v1"
 
 ENDPOINTS = {
     "station": "/station/{station_name}",
@@ -13,21 +10,20 @@ ENDPOINTS = {
 }
 
 def _get_credentials() -> tuple[str, str]:
-    load_dotenv()
-    CLIENT_ID = os.getenv("DB_CLIENT_ID")
-    API_KEY = os.getenv("DB_API_KEY")
+    client_id = config.db_client_id
+    api_key = config.db_api_key
     
-    if not CLIENT_ID or not API_KEY:
+    if not client_id or not api_key:
         raise ValueError("Invalid credentials.")
     
-    return CLIENT_ID, API_KEY
+    return client_id, api_key
 
 def _create_headers() -> dict[str, str]:
-    CLIENT_ID, API_KEY = _get_credentials()
+    client_id, api_key = _get_credentials()
     
     return {
-        "DB-Client-Id": CLIENT_ID,
-        "DB-Api-Key": API_KEY,
+        "DB-Client-Id": client_id,
+        "DB-Api-Key": api_key,
         "Accept": "application/xml",
     }
     
@@ -44,7 +40,10 @@ def _get_url(endpoint_name: str, **params: str) -> str:
             f"Missing parameter for endpoint '{endpoint_name}': {exc.args[0]}"
         ) from exc
 
-    return BASE_URL + path
+    if not config.db_timetable_base_url:
+        raise ValueError("DB_TIMETABLE_BASE_URL is not set")
+
+    return config.db_timetable_base_url + path
 
 async def _fetch_xml(path: str) -> str:
     async with httpx.AsyncClient() as client:
