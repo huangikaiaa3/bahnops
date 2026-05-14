@@ -1,0 +1,29 @@
+<timetable>
+  <s id="srv-1-1">
+    <tl c="ICE" n="100" />
+    <ar
+      pt="2605141205"
+      pp="7"
+      ppth="Leipzig|Berlin Hbf"
+      l="ICE 100"
+      fb="ICE 100"
+    />
+    <dp
+      pt="2605141210"
+      pp="8"
+      ppth="Berlin Hbf|Spandau"
+      l="ICE 100"
+      fb="ICE 100"
+    />
+  </s>
+  <s id="srv-2-1">
+    <tl c="RE" n="7" />
+    <dp
+      pt="2605141230"
+      pp="2"
+      ppth="Ostkreuz|Lichtenberg"
+      l="RE7"
+      fb="RE 7"
+    />
+  </s>
+</timetable>

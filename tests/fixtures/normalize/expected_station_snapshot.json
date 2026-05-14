@@ -1,0 +1,61 @@
+{
+  "station": {
+    "name": "Berlin Ostbahnhof",
+    "eva_number": "8010255"
+  },
+  "services": [
+    {
+      "service_id": "srv-1-1",
+      "category": "ICE",
+      "number": "100",
+      "line": "ICE 100",
+      "display_name": "ICE 100",
+      "planned_arrival": "2605141205",
+      "planned_departure": "2605141210",
+      "current_arrival": "2605141208",
+      "current_departure": "2605141214",
+      "planned_arrival_platform": "7",
+      "planned_departure_platform": "8",
+      "current_arrival_platform": "9",
+      "current_departure_platform": "10",
+      "planned_arrival_path": [
+        "Leipzig",
+        "Berlin Hbf"
+      ],
+      "planned_departure_path": [
+        "Berlin Hbf",
+        "Spandau"
+      ],
+      "current_arrival_path": [
+        "Leipzig",
+        "Berlin Hbf (tief)"
+      ],
+      "current_departure_path": [
+        "Berlin Hbf",
+        "Spandau"
+      ]
+    },
+    {
+      "service_id": "srv-2-1",
+      "category": "RE",
+      "number": "7",
+      "line": "RE7",
+      "display_name": "RE 7",
+      "planned_arrival": null,
+      "planned_departure": "2605141230",
+      "current_arrival": null,
+      "current_departure": null,
+      "planned_arrival_platform": null,
+      "planned_departure_platform": "2",
+      "current_arrival_platform": null,
+      "current_departure_platform": null,
+      "planned_arrival_path": [],
+      "planned_departure_path": [
+        "Ostkreuz",
+        "Lichtenberg"
+      ],
+      "current_arrival_path": [],
+      "current_departure_path": []
+    }
+  ]
+}

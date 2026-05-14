@@ -1,0 +1,14 @@
+<timetable>
+  <s id="srv-1-1">
+    <ar
+      ct="2605141208"
+      cp="9"
+      cpth="Leipzig|Berlin Hbf (tief)"
+    />
+    <dp
+      ct="2605141214"
+      cp="10"
+      cpth="Berlin Hbf|Spandau"
+    />
+  </s>
+</timetable>
