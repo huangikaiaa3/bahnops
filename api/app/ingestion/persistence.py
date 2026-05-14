@@ -2,6 +2,8 @@ import datetime
 import json
 from typing import TYPE_CHECKING
 
+from api.app.utils.time import DB_TIMETABLE_TIMEZONE
+
 if TYPE_CHECKING:
     import psycopg
 
@@ -150,11 +152,16 @@ def get_poll_target_data(station_id: int) -> dict:
     }
 
 
-def get_poll_run_data(poll_target_id: int, snapshot: dict) -> dict:
+def get_poll_run_data(
+    poll_target_id: int,
+    snapshot: dict,
+    started_at: datetime.datetime,
+    finished_at: datetime.datetime,
+) -> dict:
     return {
         "poll_target_id": poll_target_id,
-        "started_at": datetime.datetime.now(),
-        "finished_at": datetime.datetime.now() + datetime.timedelta(seconds=1),
+        "started_at": started_at,
+        "finished_at": finished_at,
         "status": "success",
         "services_seen": len(snapshot["services"]),
         "error_message": "",
@@ -338,7 +345,7 @@ def write_to_table(data: dict, target_table: str, connection: "psycopg.Connectio
             return row[0]
 
 
-def write_snapshot_to_db(database_url: str, snapshot: dict) -> None:
+def write_snapshot_to_db(database_url: str, snapshot: dict, started_at: datetime.datetime, finished_at: datetime.datetime,) -> None:
     import psycopg
 
     station_data = get_station_data(snapshot)
@@ -351,7 +358,12 @@ def write_snapshot_to_db(database_url: str, snapshot: dict) -> None:
         write_to_table(poll_target_data, "poll_target", connection)
 
         poll_target_id = get_id_by_unique_field("poll_target", "station_id", station_id, connection,)
-        poll_run_data = get_poll_run_data(poll_target_id, snapshot)
+        poll_run_data = get_poll_run_data(
+            poll_target_id,
+            snapshot,
+            started_at,
+            finished_at,
+        )
         poll_run_id = write_to_table(poll_run_data, "poll_run", connection, return_id=True,)
 
         service_data = get_service_data(snapshot)

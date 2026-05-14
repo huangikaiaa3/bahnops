@@ -1,8 +1,10 @@
+from datetime import datetime
 import json
 from pathlib import Path
 import unittest
 
 from api.app.ingestion.persistence import (
+    get_poll_run_data,
     get_service_data,
     get_service_state_current_data,
 )
@@ -16,6 +18,24 @@ def read_fixture(filename: str) -> str:
 
 
 class PersistenceMappingTests(unittest.TestCase):
+    def test_get_poll_run_data_uses_passed_timestamps(self) -> None:
+        snapshot = {"services": [{} for _ in range(3)]}
+        started_at = datetime.fromisoformat("2026-05-14T12:00:00+02:00")
+        finished_at = datetime.fromisoformat("2026-05-14T12:00:04+02:00")
+
+        poll_run_data = get_poll_run_data(
+            poll_target_id=1,
+            snapshot=snapshot,
+            started_at=started_at,
+            finished_at=finished_at,
+        )
+
+        self.assertEqual(poll_run_data["poll_target_id"], 1)
+        self.assertEqual(poll_run_data["started_at"], started_at)
+        self.assertEqual(poll_run_data["finished_at"], finished_at)
+        self.assertEqual(poll_run_data["services_seen"], 3)
+        self.assertEqual(poll_run_data["status"], "success")
+
     def test_get_service_data_builds_expected_observation_rows(self) -> None:
         snapshot = json.loads(read_fixture("expected_station_snapshot.json"))
         snapshot["captured_at"] = "2026-05-14T12:00:00+02:00"

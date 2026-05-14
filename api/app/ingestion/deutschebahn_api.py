@@ -2,7 +2,7 @@ import asyncio
 import httpx
 from datetime import datetime
 from api.app.core.config import config
-from api.app.utils.time import get_fetch_plan_target_time
+from api.app.utils.time import DB_TIMETABLE_TIMEZONE, get_fetch_plan_target_time
 
 ENDPOINTS = {
     "station": "/station/{station_name}",
@@ -94,7 +94,7 @@ async def lookup_station(station_name: str) -> str:
 
 async def fetch_plan(eva_number: str, hour_offset: int = 0, time_now: datetime | None = None,) -> str:
     if time_now is None:
-        time_now = datetime.now()
+        time_now = datetime.now(DB_TIMETABLE_TIMEZONE)
 
     target_date, target_hour = get_fetch_plan_target_time(
         time_now=time_now,

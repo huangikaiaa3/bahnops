@@ -1,6 +1,4 @@
 import xml.etree.ElementTree as ET
-from datetime import datetime
-from zoneinfo import ZoneInfo
 
 def parse_station_info(station_xml: str) -> tuple[str, str]:
     root = ET.fromstring(station_xml)
@@ -128,7 +126,6 @@ def normalize_station_snapshot(station_xml: str, plan_xml: str, fchg_xml: str | 
         })
 
     return {
-        "captured_at": datetime.now(ZoneInfo("Europe/Berlin")).isoformat(),
         "station": {
             "name": station_name,
             "eva_number": station_eva_number,
